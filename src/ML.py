@@ -6,10 +6,10 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import roc_curve, auc
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from utilities import _randuniform,_randchoice,_randint
+from utilities import *
 
 def DT():
     a=_randuniform(0.0,1.0)
@@ -66,12 +66,9 @@ def LR():
     tmp=a+"_"+str(round(b,5))+"_"+str(c)+"_"+LogisticRegression.__name__
     return model,tmp
 
-def run_model(train_data,train_labels,test_data,test_labels,model):
-    model.fit(train_data, train_labels)
-    prediction = model.predict(test_data)
-    return auc_measure(prediction, test_labels)
-
-def auc_measure(prediction, test_labels):
-    fpr, tpr, _ = roc_curve(test_labels, prediction, pos_label=1)
-    auc1 = auc(fpr, tpr)
-    return auc1
+def run_model(train_data,test_data,model,metric):
+    model.fit(train_data[train_data.columns[:-2]], train_data[train_data.columns[-2]])
+    prediction = model.predict(test_data[test_data.columns[:-2]])
+    test_data["prediction"]=prediction
+    sorted_data = test_data.sort_values(by=["prediction", "loc"], ascending=[False, True])
+    return round(get_score(metric,prediction, test_data[test_data.columns[-3]],sorted_data ),5)

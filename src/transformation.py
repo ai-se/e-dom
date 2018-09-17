@@ -73,4 +73,5 @@ def polynomial():
 def transform(df,scaler):
     df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
     df1['bug'] = df['bug']
+    df1['loc'] = df['loc']
     return df1
