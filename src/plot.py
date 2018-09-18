@@ -9,16 +9,17 @@ from collections import OrderedDict
 from operator import itemgetter
 
 e_value=[0.025,0.05,0.1,0.2]
-files=["ivy","log4j","synapse","velocity", "ant"]
+files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
+       ,"log4j","redaktor","tomcat","xalan","xerces"]
 
 ROOT=os.getcwd()
 
 def dump_files(f=''):
     final={}
-    for _, _, files in os.walk(ROOT + "/../dump/"):
+    for _, _, files in os.walk(ROOT + "/../dump/d2h/"):
         for file in files:
             if f in file:
-                with open("../dump/" + file, 'rb') as handle:
+                with open("../dump/d2h/" + file, 'rb') as handle:
                     dic = pickle.load(handle)
                     dic1=OrderedDict(sorted(dic.values()[0].items(), key=itemgetter(0)))
                     dic[dic.keys()[0]]=dic1.values()
@@ -38,10 +39,10 @@ def draw(dic,f):
     for x,i in enumerate(dic.keys()):
         plt.plot(dic[i],color=colors[x],label=str(i)+" epsi")
 
-    plt.ylabel("Max Auc Score")
+    plt.ylabel("Max Popt Score")
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../results/"+f+ ".png")
+    plt.savefig("../results/d2h/"+f+ ".png")
     plt.close(fig)
 
 

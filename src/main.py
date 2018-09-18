@@ -36,7 +36,7 @@ def _test(res=''):
     df=readfile("../data/defect/arc.csv")
     e_val=[]
     e_val.append(float(res))
-    metric="popt20"
+    metric="Dist2Heaven"
 
     for i in combine:
         scaler, tmp1 = i[0]()
@@ -64,7 +64,7 @@ def _test(res=''):
                         func_str_counter_dic[key] += 1
                     else:
                         func_str_counter_dic[key] += -1
-                    dic_median[x]=max(dic_value)
+                    dic_median[x]=min(dic_value)
                     break
             except:
                 pass
