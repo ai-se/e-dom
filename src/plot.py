@@ -39,7 +39,7 @@ def draw(dic,f):
     for x,i in enumerate(dic.keys()):
         plt.plot(dic[i],color=colors[x],label=str(i)+" epsi")
 
-    plt.ylabel("Max Popt Score")
+    plt.ylabel("Min D2h Score")
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
     plt.savefig("../results/d2h/"+f+ ".png")
