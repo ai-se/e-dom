@@ -20,7 +20,7 @@ def DT():
     return model,tmp
 
 def RF():
-    a = _randint(1, 50)
+    a = _randint(50, 150)
     b = _randchoice(['gini', 'entropy'])
     c = _randuniform(0.0, 1.0)
     model = RandomForestClassifier(n_estimators=a,criterion=b,min_samples_split=c, max_features=None, min_impurity_decrease=0.0, n_jobs=-1)

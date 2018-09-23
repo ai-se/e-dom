@@ -7,10 +7,12 @@ import os
 import pickle
 from collections import OrderedDict
 from operator import itemgetter
+from sklearn.metrics import auc
 
 e_value=[0.025,0.05,0.1,0.2]
-files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
-       ,"log4j","redaktor","tomcat","xalan","xerces"]
+files=["ant","camel"]
+#files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
+#       ,"log4j","redaktor","tomcat","xalan","xerces"]
 
 ROOT=os.getcwd()
 
@@ -24,7 +26,8 @@ def dump_files(f=''):
                     dic1=OrderedDict(sorted(dic.values()[0].items(), key=itemgetter(0)))
                     dic[dic.keys()[0]]=dic1.values()
                     final.update(dic)
-    return final
+    fn=OrderedDict(sorted(final.items(), key=itemgetter(0)))
+    return fn
 
 
 def draw(dic,f):
@@ -50,4 +53,7 @@ if __name__ == '__main__':
     temp_fi={}
     for i in files:
         dic=dump_files(i)
-        draw(dic,i)
+        print(round(auc(list(range(len(dic[0.025]))),dic[0.025]),3))
+        #print(dic[0.025])
+        break
+        #draw(dic,i)
