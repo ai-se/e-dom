@@ -70,5 +70,7 @@ def run_model(train_data,test_data,model,metric):
     model.fit(train_data[train_data.columns[:-2]], train_data[train_data.columns[-2]])
     prediction = model.predict(test_data[test_data.columns[:-2]])
     test_data["prediction"]=prediction
-    sorted_data = test_data.sort_values(by=["prediction", "loc"], ascending=[False, True])
-    return round(get_score(metric,prediction, test_data[test_data.columns[-3]],sorted_data ),5)
+    #sorted_data = test_data.sort_values(by=["prediction", "loc"], ascending=[False, True])
+    #return round(get_score(metric,prediction, test_data[test_data.columns[-3]],sorted_data ),5)
+    return round(get_score(metric,prediction, test_data[test_data.columns[-3]],test_data ),5)
+

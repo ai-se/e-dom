@@ -18,7 +18,7 @@ from operator import itemgetter
 import os
 
 
-metrics=["Dist2Heaven","popt20"]
+metrics=["Dist2Heaven","popt","popt20"]
 
 cwd = os.getcwd()
 data_path = os.path.join(cwd, "..", "data","defect")

@@ -23,7 +23,7 @@ def dump_files(f=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../dump/defect/d2h_" + f+".pickle", 'rb') as handle:
+    with open("../dump/defect/popt20_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -42,11 +42,11 @@ def draw(dic,f):
         li=[y+(0.01*(x+1)) for y in li]
         plt.plot(li,color=colors[x],label=str(i)+" epsi")
 
-    plt.ylabel("Min D2h Score")
+    plt.ylabel("Max Popt20 Score")
     plt.ylim(0,1)
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../results/d2h/"+f+ ".png")
+    plt.savefig("../results/popt20/"+f+ ".png")
     plt.close(fig)
 
 def draw_boxplot(dic,f):
@@ -71,8 +71,8 @@ def draw_boxplot(dic,f):
     ax1.set_xticklabels(dic1.keys())
     #ax1.set_ylim([0, 1])
     ax1.set_xlabel("Epsilon Values")
-    ax1.set_ylabel("AUC of D2h (20 repeats)", labelpad=30)
-    plt.savefig("../results/d2h/" + f + "_auc.png")
+    ax1.set_ylabel("AUC of Popt20 (20 repeats)", labelpad=30)
+    plt.savefig("../results/popt20/" + f + "_auc.png")
     plt.close(fig1)
 
 
