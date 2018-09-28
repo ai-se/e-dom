@@ -49,6 +49,27 @@ def draw(dic,f):
     plt.savefig("../results/popt20/"+f+ ".png")
     plt.close(fig)
 
+def draw_iqr(dic,f):
+    font = {'size': 70}
+    plt.rc('font', **font)
+    paras = {'lines.linewidth': 20, 'legend.fontsize': 70, 'axes.labelsize': 80, 'legend.frameon': True,
+                  'figure.autolayout': True,'axes.linewidth':8}
+    plt.rcParams.update(paras)
+    colors = ['red', 'green', 'blue', 'orange']
+    markers=["o","*","v","D"]
+    fig = plt.figure(figsize=(80, 60))
+    for x,i in enumerate(e_value):
+        li=dic[i]
+        li=[y+(0.01*(x+1)) for y in li]
+        plt.plot(li,color=colors[x],label=str(i)+" epsi")
+
+    plt.ylabel("Max Popt20 Score")
+    plt.ylim(0,1)
+    plt.xlabel("No. of iterations")
+    plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
+    plt.savefig("../results/popt20/"+f+ ".png")
+    plt.close(fig)
+
 def draw_boxplot(dic,f):
     font = {'size': 70}
     plt.rc('font', **font)
@@ -82,8 +103,10 @@ if __name__ == '__main__':
         print(i)
         dic=dump_files(i)
         ## draw the graph
-        #draw(dic['temp'],i)
+        draw(dic['temp'],i)
         del dic["temp"]
         del dic["time"]
+        del dic["counter_full"]
+        del dic["settings"]
         draw_boxplot(dic,i)
 

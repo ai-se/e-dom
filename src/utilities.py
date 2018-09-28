@@ -49,7 +49,7 @@ def get_score(criteria, prediction, test_labels,data):   # The smaller the bette
     all_metrics = [tp, fp, tn, fn, pre, rec, spec, fpr, npv, acc, f1]
     if criteria == "Accuracy":
         score = -all_metrics[-ACC]
-    elif criteria == "Dist2Heaven":
+    elif criteria == "d2h":
         score = all_metrics[-FPR] ** 2 + (1 - all_metrics[-REC]) ** 2
         score = math.sqrt(score) / math.sqrt(2)
     elif criteria=="Pf_Auc":

@@ -18,7 +18,7 @@ from operator import itemgetter
 import os
 
 
-metrics=["Dist2Heaven","popt","popt20"]
+metrics=["d2h","popt","popt20"]
 
 cwd = os.getcwd()
 data_path = os.path.join(cwd, "..", "data","defect")
@@ -53,11 +53,13 @@ def _test(res=''):
     df['bug']=df['bug'].apply(lambda x: 0 if x == 0 else 1)
 
 
-    metric="popt20"
+    metric="d2h"
     final = {}
     final_auc={}
     e_value = [0.025, 0.05, 0.1, 0.2]
     start_time=time.time()
+    dic={}
+    dic_func={}
     for mn in range(500,521):
 
         for e in e_value:
@@ -73,12 +75,13 @@ def _test(res=''):
 
             if e not in final_auc.keys():
                 final_auc[e]=[]
+                dic[e] = {}
+
 
             func_str_dic = {}
             func_str_counter_dic = {}
             lis_value = []
-            dic = {}
-
+            dic_auc={}
             for i in combine:
                 scaler, tmp1 = i[0]()
                 model, tmp2 = i[1]()
@@ -88,9 +91,11 @@ def _test(res=''):
 
             counter=0
             while counter!=1000:
-                keys=[k for k, v in func_str_counter_dic.items() if v == 0]
-                key=_randchoice(keys)
+                if counter not in dic_func.keys():
+                    dic_func[counter]=[]
                 try:
+                    keys = [k for k, v in func_str_counter_dic.items() if v == 0]
+                    key = _randchoice(keys)
                     scaler,model=func_str_dic[key]
                     df1=transform(df,scaler)
 
@@ -103,7 +108,13 @@ def _test(res=''):
                     else:
                         func_str_counter_dic[key] += -1
 
-                    dic[counter] = max(lis_value)
+                    if counter not in dic[e].keys():
+                        dic[e][counter] = []
+                        dic_func[counter]=[]
+                    if e == 0.025:
+                        dic_func[counter].append(key)
+                    dic[e][counter].append(min(lis_value))
+                    dic_auc[counter]=min(lis_value)
 
                     # sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
                     # data,labels=df1[df1.columns[:-2]], df1[df1.columns[-2]]
@@ -123,15 +134,17 @@ def _test(res=''):
                 except:
                     pass
 
-            dic1 = OrderedDict(sorted(dic.items(), key=itemgetter(0))).values()
+            dic1 = OrderedDict(sorted(dic_auc.items(), key=itemgetter(0))).values()
             area_under_curve=round(auc(list(range(len(dic1))), dic1), 3)
-            final[e]=dic1
+            final[e]=dic_auc
             final_auc[e].append(area_under_curve)
     total_run=time.time()-start_time
     final_auc["temp"]=final
     final_auc["time"] = total_run
+    final_auc["counter_full"]=dic
+    final_auc["settings"]=dic_func
     print(final_auc)
-    with open('../dump/popt20_' + res + '.pickle', 'wb') as handle:
+    with open('../dump/d2h_' + res + '.pickle', 'wb') as handle:
         pickle.dump(final_auc, handle)
 
 if __name__ == '__main__':
