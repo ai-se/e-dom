@@ -38,7 +38,7 @@ def draw(dic,f):
     markers=["o","*","v","D"]
     fig = plt.figure(figsize=(80, 60))
     for x,i in enumerate(e_value):
-        li=dic[i]
+        li=dic[i].values()
         li=[y+(0.01*(x+1)) for y in li]
         plt.plot(li,color=colors[x],label=str(i)+" epsi")
 
@@ -61,6 +61,7 @@ def draw_iqr(dic,f):
     for x,i in enumerate(e_value):
         li=dic[i]
         li=[y+(0.01*(x+1)) for y in li]
+        ## li = [y - (0.01 * (x + 1)) for y in li]
         plt.plot(li,color=colors[x],label=str(i)+" epsi")
 
     plt.ylabel("Max Popt20 Score")
@@ -108,5 +109,6 @@ if __name__ == '__main__':
         del dic["time"]
         del dic["counter_full"]
         del dic["settings"]
-        draw_boxplot(dic,i)
+
+        #draw_boxplot(dic,i)
 
