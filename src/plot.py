@@ -40,10 +40,12 @@ def draw(dic,f):
     for x,i in enumerate(e_value):
         li=dic[i].values()
         li=[y+(0.01*(x+1)) for y in li]
+        ## li = [y - (0.01 * (x + 1)) for y in li]
         plt.plot(li,color=colors[x],label=str(i)+" epsi")
 
     plt.ylabel("Max Popt20 Score")
-    plt.ylim(0,1)
+    plt.ylim(0,1.2)
+
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
     plt.savefig("../results/popt20/"+f+ ".png")
