@@ -8,9 +8,9 @@ import pickle
 import plotly
 plotly.tools.set_credentials_file(username='amritbhanu', api_key='9S1jgWyw5vNhtZ3UlVHh')
 import plotly.plotly as py
+import numpy as np
 from collections import OrderedDict
 from operator import itemgetter
-from sklearn.metrics import auc
 
 e_value=[0.2,0.1, 0.05,0.025]
 files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
@@ -61,16 +61,17 @@ def draw_iqr(dic,f):
     markers=["o","*","v","D"]
     fig = plt.figure(figsize=(80, 60))
     for x,i in enumerate(e_value):
-        li=dic[i]
-        li=[y+(0.01*(x+1)) for y in li]
-        ## li = [y - (0.01 * (x + 1)) for y in li]
-        plt.plot(li,color=colors[x],label=str(i)+" epsi")
+        li = dic[i].values()
+        med = [round(np.median(y),3) for y in li]
+        iqr = [round((np.percentile(y,75)-np.percentile(y,25)), 3) for y in li]
+        plt.plot(med,color=colors[x],label="median "+str(i)+" epsi")
+        plt.plot(iqr, color=colors[x],linestyle='-.', label="iqr "+str(i) + " epsi")
 
     plt.ylabel("Max Popt20 Score")
     plt.ylim(0,1)
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../results/popt20/"+f+ ".png")
+    plt.savefig("../results/popt20/"+f+ "_iqr.png")
     plt.close(fig)
 
 def draw_boxplot(dic,f):
@@ -105,12 +106,14 @@ if __name__ == '__main__':
     for i in files:
         print(i)
         dic=dump_files(i)
-        ## draw the graph
-        draw(dic['temp'],i)
-        del dic["temp"]
-        del dic["time"]
-        del dic["counter_full"]
-        del dic["settings"]
-
+        print(dic["settings"])
+        # draw(dic['temp'],i)
+        # draw_iqr(dic['counter_full'], i)
+        # del dic["temp"]
+        # del dic["time"]
+        # del dic["counter_full"]
+        # del dic["settings"]
         #draw_boxplot(dic,i)
+
+        break
 
