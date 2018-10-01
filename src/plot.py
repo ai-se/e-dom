@@ -8,6 +8,7 @@ import pickle
 import plotly
 plotly.tools.set_credentials_file(username='amritbhanu', api_key='9S1jgWyw5vNhtZ3UlVHh')
 import plotly.plotly as py
+from stats import rdivDemo
 import numpy as np
 from collections import OrderedDict
 from operator import itemgetter
@@ -64,6 +65,7 @@ def draw_iqr(dic,f):
         li = dic[i].values()
         med = [round(np.median(y),3) for y in li]
         iqr = [round((np.percentile(y,75)-np.percentile(y,25)), 3) for y in li]
+        #print(i, med.index(max(med)))
         plt.plot(med,color=colors[x],label="median "+str(i)+" epsi")
         plt.plot(iqr, color=colors[x],linestyle='-.', label="iqr "+str(i) + " epsi")
 
@@ -106,14 +108,18 @@ if __name__ == '__main__':
     for i in files:
         print(i)
         dic=dump_files(i)
-        print(dic["settings"])
+        #print(dic["settings"])
         # draw(dic['temp'],i)
-        # draw_iqr(dic['counter_full'], i)
+        draw_iqr(dic['counter_full'], i)
         # del dic["temp"]
         # del dic["time"]
         # del dic["counter_full"]
         # del dic["settings"]
+        # l=[]
+        # for x in dic.keys():
+        #     l.append([str(x)]+dic[x])
+        # rdivDemo(l)
         #draw_boxplot(dic,i)
+        #rdivDemo(data, latex=True, higherBetter=False)
 
-        break
 
