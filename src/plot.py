@@ -24,7 +24,7 @@ def dump_files(f=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../dump/defect/popt20_" + f+".pickle", 'rb') as handle:
+    with open("../dump/defect/d2h_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -110,15 +110,15 @@ if __name__ == '__main__':
         dic=dump_files(i)
         #print(dic["settings"])
         # draw(dic['temp'],i)
-        draw_iqr(dic['counter_full'], i)
-        # del dic["temp"]
-        # del dic["time"]
-        # del dic["counter_full"]
-        # del dic["settings"]
-        # l=[]
-        # for x in dic.keys():
-        #     l.append([str(x)]+dic[x])
-        # rdivDemo(l)
+        #draw_iqr(dic['counter_full'], i)
+        del dic["temp"]
+        del dic["time"]
+        del dic["counter_full"]
+        del dic["settings"]
+        l=[]
+        for x in dic.keys():
+            l.append([str(x)]+dic[x])
+        rdivDemo(l)
         #draw_boxplot(dic,i)
         #rdivDemo(data, latex=True, higherBetter=False)
 
