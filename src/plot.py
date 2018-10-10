@@ -111,15 +111,21 @@ if __name__ == '__main__':
         #print(dic["settings"])
         # draw(dic['temp'],i)
         #draw_iqr(dic['counter_full'], i)
-        del dic["temp"]
-        del dic["time"]
-        del dic["counter_full"]
-        del dic["settings"]
-        l=[]
-        for x in dic.keys():
-            l.append([str(x)]+dic[x])
-        rdivDemo(l)
+        for x in range(20):
+            with open("../log/"+i+"_"+str(x)+".txt","w") as f:
+                for j in dic["counter_full"][0.05].keys():
+                    print(x,j)
+                    f.write(dic["settings"][j][x] + "\t:\t"+ str(dic["counter_full"][0.05][j][x])+"\n")
+
+        break
+        # del dic["temp"]
+        # del dic["time"]
+        # del dic["counter_full"]
+        # del dic["settings"]
+        # l=[]
+        # for x in dic.keys():
+        #     l.append([str(x)]+dic[x])
+        # rdivDemo(l)
         #draw_boxplot(dic,i)
-        #rdivDemo(data, latex=True, higherBetter=False)
 
 
