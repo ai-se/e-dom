@@ -35,6 +35,9 @@ file_dic = {"ivy":     ["ivy-1.1.csv", "ivy-1.4.csv", "ivy-2.0.csv"],\
         "xerces": ["xerces-1.2.csv", "xerces-1.3.csv", "xerces-1.4.csv"]
         }
 
+file_inc = {"ivy": 0, "lucene": 1, "poi":  2, "synapse":3, "velocity":4, "camel": 5,"jedit": 6,
+            "log4j": 7, "xalan": 8,"xerces": 9}
+
 def readfile(path=""):
     df=pd.read_csv(path)
     return df
@@ -60,7 +63,7 @@ def _test(res=''):
     start_time=time.time()
     dic={}
     dic_func={}
-    for mn in range(500,521):
+    for mn in range(500+file_inc[res]*10,521+file_inc[res]*10):
 
         for e in e_value:
             np.random.seed(mn)
