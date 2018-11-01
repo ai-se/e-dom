@@ -2,15 +2,15 @@ from __future__ import print_function, division
 
 __author__ = 'amrit'
 
-from transformation import *
+from src.transformation import *
 from random import seed
-from utilities import _randchoice, unpack
-from ML import *
+from src.utilities import _randchoice, unpack
+from src.ML import *
 from itertools import product
 from sklearn.metrics import auc
 #from sklearn.model_selection import StratifiedKFold
 #from sklearn.model_selection import StratifiedShuffleSplit
-from demos import *
+from src.demos import *
 import time
 import pickle
 from collections import OrderedDict
@@ -21,7 +21,7 @@ import os
 metrics=["d2h","popt","popt20"]
 
 cwd = os.getcwd()
-data_path = os.path.join(cwd, "..", "data","defect")
+data_path = os.path.join(cwd, "..","..", "data","defect")
 
 file_dic = {"ivy":     ["ivy-1.1.csv", "ivy-1.4.csv", "ivy-2.0.csv"],\
         "lucene":  ["lucene-2.0.csv", "lucene-2.2.csv", "lucene-2.4.csv"],\
@@ -147,7 +147,7 @@ def _test(res=''):
     final_auc["counter_full"]=dic
     final_auc["settings"]=dic_func
     print(final_auc)
-    with open('../dump/d2h_' + res + '.pickle', 'wb') as handle:
+    with open('../../dump/d2h_' + res + '.pickle', 'wb') as handle:
         pickle.dump(final_auc, handle)
 
 if __name__ == '__main__':

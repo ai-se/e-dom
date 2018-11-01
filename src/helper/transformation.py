@@ -70,8 +70,17 @@ def polynomial():
     tmp = str(a) + "_" + str(b) + "_" + str(c)+ "_"+PolynomialFeatures.__name__
     return scaler, tmp
 
+def no_transformation():
+    return no_transformation.__name__, no_transformation.__name__
+
 def transform(df,scaler):
-    df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
-    df1['bug'] = df['bug']
-    df1['loc'] = df['loc']
-    return df1
+    if scaler== no_transformation.__name__:
+        return df
+    elif "DataFrame" in str(type(df)):
+        df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
+        df1['bug'] = df['bug']
+        df1['loc'] = df['loc']
+        return df1
+    elif "array" in str(type(df)):
+        df1 = pd.DataFrame(scaler.fit_transform(df))
+        return df1

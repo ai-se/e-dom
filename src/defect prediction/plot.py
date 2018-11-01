@@ -8,7 +8,7 @@ import pickle
 import plotly
 plotly.tools.set_credentials_file(username='amritbhanu', api_key='9S1jgWyw5vNhtZ3UlVHh')
 import plotly.plotly as py
-from stats import rdivDemo
+from src.stats import rdivDemo
 import numpy as np
 from collections import OrderedDict
 from operator import itemgetter
@@ -24,7 +24,7 @@ def dump_files(f=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../dump/defect/d2h_" + f+".pickle", 'rb') as handle:
+    with open("../../dump/defect/popt20_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -49,7 +49,7 @@ def draw(dic,f):
 
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../results/popt20/"+f+ ".png")
+    plt.savefig("../../results/popt20/"+f+ ".png")
     plt.close(fig)
 
 def draw_iqr(dic,f):
@@ -63,9 +63,12 @@ def draw_iqr(dic,f):
     fig = plt.figure(figsize=(80, 60))
     for x,i in enumerate(e_value):
         li = dic[i].values()
+        # temp1 = [z for y,z in enumerate(li) if y==100]
+        # print(max(temp1[0]))
         med = [round(np.median(y),3) for y in li]
         iqr = [round((np.percentile(y,75)-np.percentile(y,25)), 3) for y in li]
-        #print(i, med.index(max(med)))
+
+        #print(i, max(med[:100]))
         plt.plot(med,color=colors[x],label="median "+str(i)+" epsi")
         plt.plot(iqr, color=colors[x],linestyle='-.', label="iqr "+str(i) + " epsi")
 
@@ -73,7 +76,7 @@ def draw_iqr(dic,f):
     plt.ylim(0,1)
     plt.xlabel("No. of iterations")
     plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../results/popt20/"+f+ "_iqr.png")
+    plt.savefig("../../results/popt20/"+f+ "_iqr.png")
     plt.close(fig)
 
 def draw_boxplot(dic,f):
@@ -99,7 +102,7 @@ def draw_boxplot(dic,f):
     #ax1.set_ylim([0, 1])
     ax1.set_xlabel("Epsilon Values")
     ax1.set_ylabel("AUC of Popt20 (20 repeats)", labelpad=30)
-    plt.savefig("../results/popt20/" + f + "_auc.png")
+    plt.savefig("../../results/popt20/" + f + "_auc.png")
     plt.close(fig1)
 
 
@@ -171,11 +174,13 @@ if __name__ == '__main__':
     for i in files:
         print(i)
         dic=dump_files(i)
-        #print(dic["settings"])
+        # print(dic["settings"])
         # draw(dic['temp'],i)
-        #draw_iqr(dic['counter_full'], i)
-        dic_settings=para_samples(dic["counter_full"][0.05],dic["settings"],i)
-        print(dic_settings)
+
+        draw_iqr(dic['counter_full'], i)
+
+        # dic_settings=para_samples(dic["counter_full"][0.05],dic["settings"],i)
+        # print(dic_settings)
 
         # del dic["temp"]
         # del dic["time"]
@@ -185,6 +190,7 @@ if __name__ == '__main__':
         # for x in dic.keys():
         #     l.append([str(x)]+dic[x])
         # rdivDemo(l)
-        #draw_boxplot(dic,i)
+
+        # draw_boxplot(dic,i)
 
 
