@@ -54,7 +54,7 @@ def _test(res=''):
     metric="d2h"
     final = {}
     final_auc={}
-    e_value = [0.025, 0.05]#, 0.1, 0.2]
+    e_value = [0.025, 0.05, 0.1, 0.2]
     start_time=time.time()
     dic={}
     dic_func={}
@@ -92,7 +92,7 @@ def _test(res=''):
                 func_str_counter_dic[string1] = 0
 
             counter=0
-            while counter!=2:
+            while counter!=200:
                 if counter not in dic_func.keys():
                     dic_func[counter]=[]
                 try:

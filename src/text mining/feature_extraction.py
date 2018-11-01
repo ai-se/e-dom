@@ -34,7 +34,7 @@ def LDA_():
     d, e, f = _randuniform(0.51, 1.0), _randuniform(1, 50), _randchoice([150,180,210,250,300])
     lda= LatentDirichletAllocation(n_components=a,doc_topic_prior=b, topic_word_prior=c,
                                    learning_decay=d,learning_offset=e,batch_size=f,
-                                   max_iter=1000,learning_method='online')
+                                   max_iter=100,learning_method='online')
     tmp = str(a) + "_" + str(b) + "_" + str(c) + "_" + str(d) + "_" + str(e) + "_" + str(f) + "_" +LatentDirichletAllocation.__name__
     return [vect,lda], tmp
 
