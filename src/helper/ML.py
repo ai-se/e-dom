@@ -62,15 +62,13 @@ def LR():
     a=_randchoice(['l1','l2'])
     b=_randuniform(0.0,0.1)
     c=_randint(1,500)
-    model = LogisticRegression(penalty=a, tol=b, C=float(c), solver='liblinear', n_jobs=-1)
+    model = LogisticRegression(penalty=a, tol=b, C=float(c), solver='liblinear', multi_class='warn',n_jobs=-1)
     tmp=a+"_"+str(round(b,5))+"_"+str(c)+"_"+LogisticRegression.__name__
     return model,tmp
 
-def run_model(train_data,test_data,model,metric):
-    model.fit(train_data[train_data.columns[:-2]], train_data[train_data.columns[-2]])
-    prediction = model.predict(test_data[test_data.columns[:-2]])
+def run_model(train_data,test_data,model,metric,training=-1):
+    model.fit(train_data[train_data.columns[:training]], train_data["bug"])
+    prediction = model.predict(test_data[test_data.columns[:training]])
     test_data["prediction"]=prediction
-    #sorted_data = test_data.sort_values(by=["prediction", "loc"], ascending=[False, True])
-    #return round(get_score(metric,prediction, test_data[test_data.columns[-3]],sorted_data ),5)
-    return round(get_score(metric,prediction, test_data[test_data.columns[-3]],test_data ),5)
+    return round(get_score(metric,prediction, test_data["bug"],test_data ),5)
 

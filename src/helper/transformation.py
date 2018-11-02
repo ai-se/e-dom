@@ -75,7 +75,10 @@ def no_transformation():
 
 def transform(df,scaler):
     if scaler== no_transformation.__name__:
-        return df
+        if "DataFrame" in str(type(df)):
+            return df
+        else:
+            return pd.DataFrame(df)
     elif "DataFrame" in str(type(df)):
         df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
         df1['bug'] = df['bug']

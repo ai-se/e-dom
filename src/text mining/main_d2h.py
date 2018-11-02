@@ -10,7 +10,7 @@ sys.path.append(import_path)
 
 from helper.transformation import *
 from random import seed
-from helper.utilities import _randchoice
+from helper.utilities import _randchoice, unpack
 from helper.ML import *
 from itertools import product
 from sklearn.metrics import auc
@@ -58,20 +58,19 @@ def _test(res=''):
     start_time=time.time()
     dic={}
     dic_func={}
-    for mn in range(500+file_inc[res]*10,521+file_inc[res]*10):
-
+    for mn in range(500+file_inc[res]*10,511+file_inc[res]*10):
         for e in e_value:
             np.random.seed(mn)
             seed(mn)
             transformation=[[TF]*30,[TFIDF]*30, [HASHING]*8, [LDA_]*50]
-            preprocess = [standard_scaler, minmax_scaler, maxabs_scaler, [robust_scaler] * 20, kernel_centerer,
-                          [quantile_transform] * 200
-                , normalizer, [binarize] * 100]  # ,[polynomial]*5
+            # preprocess = [standard_scaler, minmax_scaler, maxabs_scaler, [robust_scaler] * 20, kernel_centerer,
+            #               [quantile_transform] * 200, normalizer, [binarize] * 100]  # ,[polynomial]*5
+            preprocess=[no_transformation]
             MLs = [NB, [KNN] * 20, [RF] * 50, [DT] * 30, [LR] * 50, [SVM]*100]
             preprocess_list = unpack(preprocess)
             MLs_list = unpack(MLs)
             trans_list=unpack(transformation)
-            combine = [[r[0], r[1], r[2]] for r in product(preprocess_list, MLs_list, trans_list)]
+            combine = [[r[0], r[1], r[2]] for r in product(trans_list,preprocess_list, MLs_list)]
 
             if e not in final_auc.keys():
                 final_auc[e]=[]
@@ -103,10 +102,10 @@ def _test(res=''):
                     vector,scaler,model=func_str_dic[key]
                     df=extraction(raw_data,vector)
                     df1=transform(df,scaler)
-                    df1["class"] = labels
+                    df1["bug"] = labels
 
                     train_data, test_data = df1.iloc[:cut_off,:], df1.iloc[cut_off:,:]
-                    measurement = run_model(train_data, test_data, model, metric)
+                    measurement = run_model(train_data, test_data, model, metric,training=-1)
 
                     if all(abs(t - measurement) > e for t in lis_value):
                         lis_value.append(measurement)
@@ -136,7 +135,7 @@ def _test(res=''):
     final_auc["counter_full"]=dic
     final_auc["settings"]=dic_func
     print(final_auc)
-    with open('../dump/d2h_' + res + '.pickle', 'wb') as handle:
+    with open('../../dump/d2h_' + res + '.pickle', 'wb') as handle:
         pickle.dump(final_auc, handle)
 
 if __name__ == '__main__':
