@@ -6,6 +6,8 @@ import pandas as pd
 from sklearn.preprocessing import *
 from utilities import _randint, _randchoice, _randuniform
 
+pd.options.mode.chained_assignment = None
+
 def nomalization(df, methods='min-max'):
     # nomalization the preprocessed columns from dataset
     # methods contain mean, and min-max.

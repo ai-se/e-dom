@@ -14,7 +14,7 @@ def TF():
 
 
 def TFIDF():
-    a, b = _randuniform(0, 1), _randint(1, 10)
+    a, b = _randint(100, 1000), _randint(1, 10)
     c = _randchoice(['l1', 'l2', None])
     vect = TfidfVectorizer(max_df=a, min_df=b, norm=c)
     tmp = str(a) + "_" + str(b) + "_" + str(c) + "_" + TfidfVectorizer.__name__

@@ -8,13 +8,13 @@ import pickle
 import plotly
 plotly.tools.set_credentials_file(username='amritbhanu', api_key='9S1jgWyw5vNhtZ3UlVHh')
 import plotly.plotly as py
-from src.stats import rdivDemo
+#from helper.stats import rdivDemo
 import numpy as np
 from collections import OrderedDict
 from operator import itemgetter
 
 e_value=[0.2,0.1, 0.05,0.025]
-files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
+files=["pitsA","pitsB","pitsC","pitsD","pitsE","pitsF"]#,]
 #files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
 #       ,"log4j","redaktor","tomcat","xalan","xerces"]
 
@@ -24,7 +24,7 @@ def dump_files(f=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../../dump/defect/popt20_" + f+".pickle", 'rb') as handle:
+    with open("../../dump/text/full/d2h_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -53,14 +53,14 @@ def draw(dic,f):
     plt.close(fig)
 
 def draw_iqr(dic,f):
-    font = {'size': 70}
+    font = {'size': 90}
     plt.rc('font', **font)
-    paras = {'lines.linewidth': 20, 'legend.fontsize': 70, 'axes.labelsize': 80, 'legend.frameon': True,
+    paras = {'lines.linewidth': 10, 'legend.fontsize': 60, 'axes.labelsize': 90, 'legend.frameon': True,
                   'figure.autolayout': True,'axes.linewidth':8}
     plt.rcParams.update(paras)
     colors = ['red', 'green', 'blue', 'orange']
     markers=["o","*","v","D"]
-    fig = plt.figure(figsize=(80, 60))
+    fig = plt.figure(figsize=(50, 40))
     for x,i in enumerate(e_value):
         li = dic[i].values()
         # temp1 = [z for y,z in enumerate(li) if y==100]
@@ -72,11 +72,12 @@ def draw_iqr(dic,f):
         plt.plot(med,color=colors[x],label="median "+str(i)+" epsi")
         plt.plot(iqr, color=colors[x],linestyle='-.', label="iqr "+str(i) + " epsi")
 
-    plt.ylabel("Max Popt20 Score")
+    plt.ylabel("Min D2h Score")
     plt.ylim(0,1)
     plt.xlabel("No. of iterations")
-    plt.legend(bbox_to_anchor=(0.7, 0.5), loc=1, ncol=1, borderaxespad=0.)
-    plt.savefig("../../results/popt20/"+f+ "_iqr.png")
+    plt.title(f + ' Dataset')
+    plt.legend(bbox_to_anchor=(0.8, 0.9), loc=1, ncol=1, borderaxespad=0.)
+    plt.savefig("../../results/text/"+f+ "_iqr.png")
     plt.close(fig)
 
 def draw_boxplot(dic,f):
@@ -192,5 +193,4 @@ if __name__ == '__main__':
         # rdivDemo(l)
 
         # draw_boxplot(dic,i)
-
 

@@ -33,7 +33,7 @@ def unpack(l):
     return tmp
 
 def get_performance(prediction, test_labels):
-    tn, fp, fn, tp = confusion_matrix(test_labels,prediction).ravel()
+    tn, fp, fn, tp = confusion_matrix(test_labels,prediction, labels=[0,1]).ravel()
     pre = 1.0 * tp / (tp + fp) if (tp + fp) != 0 else 0
     rec = 1.0 * tp / (tp + fn) if (tp + fn) != 0 else 0
     spec = 1.0 * tn / (tn + fp) if (tn + fp) != 0 else 0
@@ -43,8 +43,8 @@ def get_performance(prediction, test_labels):
     f1 = 2.0 * tp / (2.0 * tp + fp + fn) if (2.0 * tp + fp + fn) != 0 else 0
     return [round(x, 3) for x in [pre, rec, spec, fpr, npv, acc, f1]]
 
-def get_score(criteria, prediction, test_labels,data):   # The smaller the better
-    tn, fp, fn, tp = confusion_matrix(test_labels,prediction).ravel()
+def get_score(criteria, prediction, test_labels,data):
+    tn, fp, fn, tp = confusion_matrix(test_labels,prediction, labels=[0,1]).ravel()
     pre, rec, spec, fpr, npv, acc, f1 = get_performance(test_labels,prediction)
     all_metrics = [tp, fp, tn, fn, pre, rec, spec, fpr, npv, acc, f1]
     if criteria == "Accuracy":

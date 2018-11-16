@@ -69,6 +69,6 @@ def LR():
 def run_model(train_data,test_data,model,metric,training=-1):
     model.fit(train_data[train_data.columns[:training]], train_data["bug"])
     prediction = model.predict(test_data[test_data.columns[:training]])
-    test_data["prediction"]=prediction
-    return round(get_score(metric,prediction, test_data["bug"],test_data ),5)
+    test_data.loc[:,"prediction"]=prediction
+    return round(get_score(metric,prediction, test_data["bug"].tolist(),test_data ),5)
 

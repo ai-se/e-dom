@@ -24,6 +24,7 @@ import pickle
 from collections import OrderedDict
 from operator import itemgetter
 
+
 data_path = os.path.join(cwd, "..","..", "data","textmining")
 metrics=["d2h","popt","popt20"]
 file_inc = {"pitsA": 0, "pitsB": 1, "pitsC":  2, "pitsD":3, "pitsE":4, "pitsF": 5}
@@ -66,12 +67,11 @@ def _test(res=''):
             # preprocess = [standard_scaler, minmax_scaler, maxabs_scaler, [robust_scaler] * 20, kernel_centerer,
             #               [quantile_transform] * 200, normalizer, [binarize] * 100]  # ,[polynomial]*5
             preprocess=[no_transformation]
-            MLs = [NB, [KNN] * 20, [RF] * 50, [DT] * 30, [LR] * 50, [SVM]*100]
+            MLs = [NB, [KNN] * 20, [RF] * 50, [DT] * 30, [LR] * 50]
             preprocess_list = unpack(preprocess)
             MLs_list = unpack(MLs)
             trans_list=unpack(transformation)
             combine = [[r[0], r[1], r[2]] for r in product(trans_list,preprocess_list, MLs_list)]
-
             if e not in final_auc.keys():
                 final_auc[e]=[]
                 dic[e] = {}
@@ -92,38 +92,37 @@ def _test(res=''):
 
             counter=0
             while counter!=200:
+                print(counter)
                 if counter not in dic_func.keys():
                     dic_func[counter]=[]
-                try:
-                    keys = [k for k, v in func_str_counter_dic.items() if v == 0]
-                    key = _randchoice(keys)
 
-                    cut_off=int(len(raw_data)*0.8)
-                    vector,scaler,model=func_str_dic[key]
-                    df=extraction(raw_data,vector)
-                    df1=transform(df,scaler)
-                    df1["bug"] = labels
+                keys = [k for k, v in func_str_counter_dic.items() if v == 0]
+                key = _randchoice(keys)
 
-                    train_data, test_data = df1.iloc[:cut_off,:], df1.iloc[cut_off:,:]
-                    measurement = run_model(train_data, test_data, model, metric,training=-1)
+                cut_off=int(len(raw_data)*0.8)
+                vector,scaler,model=func_str_dic[key]
+                df=extraction(raw_data,vector)
+                df1=transform(df,scaler)
+                df1.loc[:,"bug"] = labels
 
-                    if all(abs(t - measurement) > e for t in lis_value):
-                        lis_value.append(measurement)
-                        func_str_counter_dic[key] += 1
-                    else:
-                        func_str_counter_dic[key] += -1
+                train_data, test_data = df1.iloc[:cut_off,:], df1.iloc[cut_off:,:]
+                measurement = run_model(train_data, test_data, model, metric,training=-1)
 
-                    if counter not in dic[e].keys():
-                        dic[e][counter] = []
-                        dic_func[counter]=[]
-                    if e == 0.025:
-                        dic_func[counter].append(key)
-                    dic[e][counter].append(min(lis_value))
-                    dic_auc[counter]=min(lis_value)
+                if all(abs(t - measurement) > e for t in lis_value):
+                    lis_value.append(measurement)
+                    func_str_counter_dic[key] += 1
+                else:
+                    func_str_counter_dic[key] += -1
 
-                    counter+=1
-                except:
-                    pass
+                if counter not in dic[e].keys():
+                    dic[e][counter] = []
+                    dic_func[counter]=[]
+                if e == 0.025:
+                    dic_func[counter].append(key)
+                dic[e][counter].append(min(lis_value))
+                dic_auc[counter]=min(lis_value)
+
+                counter+=1
 
             dic1 = OrderedDict(sorted(dic_auc.items(), key=itemgetter(0))).values()
             area_under_curve=round(auc(list(range(len(dic1))), dic1), 3)
@@ -135,7 +134,7 @@ def _test(res=''):
     final_auc["counter_full"]=dic
     final_auc["settings"]=dic_func
     print(final_auc)
-    with open('../../dump/d2h_' + res + '.pickle', 'wb') as handle:
+    with open('dump/d2h_' + res + '.pickle', 'wb') as handle:
         pickle.dump(final_auc, handle)
 
 if __name__ == '__main__':
