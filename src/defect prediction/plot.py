@@ -13,7 +13,7 @@ import numpy as np
 from collections import OrderedDict
 from operator import itemgetter
 
-e_value=[0.2,0.1, 0.05,0.025]
+e_value=[0.2,0.1, 0.05]
 files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
 #files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
 #       ,"log4j","redaktor","tomcat","xalan","xerces"]
@@ -55,7 +55,7 @@ def draw(dic,f):
 def draw_iqr(dic,f):
     font = {'size': 90}
     plt.rc('font', **font)
-    paras = {'lines.linewidth': 10, 'legend.fontsize': 60, 'axes.labelsize': 90, 'legend.frameon': True,
+    paras = {'lines.linewidth': 10, 'legend.fontsize': 90, 'axes.labelsize': 90, 'legend.frameon': True,
                   'figure.autolayout': True,'axes.linewidth':8}
     plt.rcParams.update(paras)
     colors = ['red', 'green', 'blue', 'orange']
@@ -66,6 +66,7 @@ def draw_iqr(dic,f):
         # temp1 = [z for y,z in enumerate(li) if y==100]
         # print(max(temp1[0]))
         med = [round(np.median(y),3) for y in li]
+        print(i, min(li[29]))
         iqr = [round((np.percentile(y,75)-np.percentile(y,25)), 3) for y in li]
 
         #print(i, max(med[:100]))
