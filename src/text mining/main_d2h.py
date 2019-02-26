@@ -117,7 +117,7 @@ def _test(res=''):
                 if counter not in dic[e].keys():
                     dic[e][counter] = []
                     dic_func[counter]=[]
-                if e == 0.025:
+                if e == 0.05:
                     dic_func[counter].append(key)
                 dic[e][counter].append(min(lis_value))
                 dic_auc[counter]=min(lis_value)
