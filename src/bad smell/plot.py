@@ -14,7 +14,7 @@ from collections import OrderedDict
 from operator import itemgetter
 
 e_value=[0.2,0.1, 0.05]
-files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
+files=["DataClass", "FeatureEnvy", "GodClass", "LongMethod"]
 #files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
 #       ,"log4j","redaktor","tomcat","xalan","xerces"]
 
@@ -24,7 +24,7 @@ def dump_files(f=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../../dump/defect/d2h_" + f+".pickle", 'rb') as handle:
+    with open("../../dump/smell/d2h_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -172,14 +172,10 @@ def para_samples(perf, settings, file):
 
 
 if __name__ == '__main__':
-    temp_fi={}
-    for i in files:
-        print(i)
-        dic=dump_files(i)
-        # print(dic["settings"])
-        # draw(dic['temp'],i)
-
-        draw_iqr(dic['counter_full'], i)
+    temp_fi = {}
+    for j in files:
+        dic = dump_files(j)
+        temp_fi[j] = sorted(dic["counter_full"][0.2][29])
 
         # dic_settings=para_samples(dic["counter_full"][0.05],dic["settings"],i)
         # print(dic_settings)
@@ -194,5 +190,7 @@ if __name__ == '__main__':
         # rdivDemo(l)
 
         # draw_boxplot(dic,i)
-
+    print(temp_fi)
+    with open('../../data/smell/dodge.pickle', 'wb') as handle:
+        pickle.dump(temp_fi, handle)
 

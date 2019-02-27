@@ -40,7 +40,7 @@ def readfile(filename=''):
 def _test(res=''):
 
     for x in directories:
-        raw_data,labels = readfile("../../data/smell/"+x+"/"+res+".csv")
+        raw_data,labels = readfile("../../data/issue_close_time/"+x+"/"+res+".csv")
 
         metric="d2h"
         final = {}

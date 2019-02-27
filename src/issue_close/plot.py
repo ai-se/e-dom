@@ -14,17 +14,17 @@ from collections import OrderedDict
 from operator import itemgetter
 
 e_value=[0.2,0.1, 0.05]
-files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
-#files=["ivy","log4j","synapse","velocity", "ant","arc","camel","poi","prop","velocity","jedit"
-#       ,"log4j","redaktor","tomcat","xalan","xerces"]
+files=["camel.csv", "cloudstack.csv", "cocoon.csv", "deeplearning.csv","hive.csv" ,"node.csv", "ofbiz.csv", "qpid.csv"]
+folders = ["1 day"] + map(lambda x: str(x) + " days", [7, 14, 30, 90, 180, 365])
 
 ROOT=os.getcwd()
 
-def dump_files(f=''):
+def dump_files(folder='',file=''):
     # for _, _, files in os.walk(ROOT + "/../dump/defect/"):
     #     for file in files:
     #         if f in file:
-    with open("../../dump/defect/d2h_" + f+".pickle", 'rb') as handle:
+    f=file.split(".")[0]
+    with open("../../dump/issue_close/d2h_" +folder+"_"+ f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
@@ -172,14 +172,18 @@ def para_samples(perf, settings, file):
 
 
 if __name__ == '__main__':
+
     temp_fi={}
-    for i in files:
-        print(i)
-        dic=dump_files(i)
+    for i in folders:
+        temp={}
+        for j in files:
+            dic=dump_files(i,j)
+            temp[j]=sorted(dic["counter_full"][0.2][29])
+        temp_fi[i]=temp
         # print(dic["settings"])
         # draw(dic['temp'],i)
 
-        draw_iqr(dic['counter_full'], i)
+        #draw_iqr(dic['counter_full'], i)
 
         # dic_settings=para_samples(dic["counter_full"][0.05],dic["settings"],i)
         # print(dic_settings)
@@ -194,5 +198,8 @@ if __name__ == '__main__':
         # rdivDemo(l)
 
         # draw_boxplot(dic,i)
+
+    with open('../../data/issue_close_time/dodge.pickle', 'wb') as handle:
+        pickle.dump(temp_fi, handle)
 
 
