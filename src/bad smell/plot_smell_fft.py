@@ -54,16 +54,27 @@ for i, clf in enumerate(classifiers):
     data.append(tmp_bar)
 
 layout = go.Layout(
+    autosize=True,
     title="Bad Smell - 25 Times",
+    font=dict(size=18),
     yaxis=dict(
         title='Distance to Heaven',
-        zeroline=False
+        zeroline=False,
+        titlefont=dict(size=20),
+        tickfont=dict(size=24),
+        automargin=True,
     ),
     xaxis=dict(
         title='Bad Smell Dataset (very small)',
-        zeroline=False
+        zeroline=False,
+        titlefont=dict(size=24),
+        tickfont=dict(size=20),
+        tickangle=-45,
+        automargin=True,
     ),
-    boxmode='group'
+    boxmode='group',
+    legend=dict(font=dict(size=20)
+    )
 )
 fig = go.Figure(data=data, layout=layout)
 py.plot(fig, filename="Smell - 25 Times")

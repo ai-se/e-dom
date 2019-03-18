@@ -14,7 +14,7 @@ from collections import OrderedDict
 from operator import itemgetter
 
 e_value=[0.2,0.1, 0.05]
-files=["camel.csv", "cloudstack.csv", "cocoon.csv", "deeplearning.csv","hive.csv" ,"node.csv", "ofbiz.csv", "qpid.csv"]
+files=["camel.csv", "cloudstack.csv", "cocoon.csv", "deeplearning.csv","hive.csv" ,"node.csv", "ofbiz.csv", "qpid.csv", "hadoop.csv"]
 folders = ["1 day"] + map(lambda x: str(x) + " days", [7, 14, 30, 90, 180, 365])
 
 ROOT=os.getcwd()
