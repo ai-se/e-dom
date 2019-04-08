@@ -14,7 +14,12 @@ import pickle
 cwd=os.getcwd()
 data_path=os.path.join(cwd,"..","..","data", "UCI")
 file_inc = {"adult": 0, "cancer": 1, "covtype":  2, "diabetic":3, "optdigits":4, "pendigits":5
-            , "satellite":6, "shuttle":7, "waveform":8}
+            , "satellite":6, "shuttle":7, "waveform":8,"annealing":9,"audit":10,"autism":11,
+            "bank":12,"bankrupt":13,"biodegrade":14,"blood-transfusion":15,"car":16,
+            "cardiotocography":17,"cervical-cancer":18, "climate-sim":19,"contraceptive":20,
+            "credit-approval":21,"credit-default":22,"crowdsource":23,"drug-consumption":24,
+            "electric-stable":25,"gamma":26,"hand":27,"hepmass":28,"htru2":29,"image":30,
+            "kddcup":31,"liver":32,"mushroom":33,"phishing":34,"sensorless-drive":35,"shop-intention":36}
 
 final = {"adult": {"pd":[0.605,0.614,0.597,0.602],"pf":[0.075,0.08,0.071,0.074]},
          "cancer": {"pd":[0.934,0.934,0.934,0.939],"pf":[0.014,0.017,0.025,0.008]},
@@ -93,11 +98,12 @@ if __name__ == '__main__':
 
     temp_fi = {}
     temp_fft={}
-    print(file_inc.keys())
+    print(d2h)
     for j in file_inc.keys():
         dic = dump_files(j)
         temp_fft[j]=dump_files1(j)
         temp_fi[j] = sorted(dic["counter_full"][0.2][29])
+
 
     with open('../../dump/UCI/dodge.pickle', 'wb') as handle:
         pickle.dump(temp_fi, handle)

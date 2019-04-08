@@ -24,10 +24,23 @@ from operator import itemgetter
 
 
 metrics=["d2h"]
-data_path = os.path.join(cwd, "..","..", "data","smell")
 
-file_inc = {"adult": 0, "cancer": 1, "covtype":  2, "diabetic":3, "optdigits":4, "pendigits":5
-            , "satellite":6, "shuttle":7, "waveform":8}
+# file_inc = {"adult": 0, "cancer": 1, "covtype":  2, "diabetic":3, "optdigits":4, "pendigits":5
+#             , "satellite":6, "shuttle":7, "waveform":8,"annealing":9,"audit":10,"autism":11,
+#             "bank":12,"bankrupt":13,"biodegrade":14,"blood-transfusion":15,"car":16,
+#             "cardiotocography":17,"cervical-cancer":18, "climate-sim":19,"contraceptive":20,
+#             "credit-approval":21,"credit-default":22,"crowdsource":23,"drug-consumption":24,
+#             "electric-stable":25,"gamma":26,"hand":27,"hepmass":28,"htru2":29,"image":30,
+#             "kddcup":31,"liver":32,"mushroom":33,"phishing":34,"sensorless-drive":35,"shop-intention":36}
+
+# image, liver, phishing
+
+file_inc = {"annealing":9,"audit":10,"autism":11,
+            "bank":12,"bankrupt":13,"biodegrade":14,"blood-transfusion":15,"car":16,
+            "cardiotocography":17,"cervical-cancer":18, "climate-sim":19,"contraceptive":20,
+            "credit-approval":21,"credit-default":22,"crowdsource":23,"drug-consumption":24,
+            "electric-stable":25,"gamma":26,"hand":27,"hepmass":28,"htru2":29,"image":30,
+            "kddcup":31,"liver":32,"mushroom":33,"phishing":34,"sensorless-drive":35,"shop-intention":36}
 
 def readfile(filename=''):
     df=pd.read_csv(filename,header=None)

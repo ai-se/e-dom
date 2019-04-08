@@ -38,20 +38,26 @@ issue_close = {"camel": 0, "cloudstack": 1, "cocoon":  2, "deeplearning":3,"hado
             , "ofbiz":7, "qpid":8}
 
 UCI = {"adult": 0, "cancer": 1, "covtype":  2, "diabetic":3, "optdigits":4, "pendigits":5
-            , "satellite":6, "shuttle":7, "waveform":8}
+            , "satellite":6, "shuttle":7, "waveform":8,"annealing":9,"audit":10,"autism":11,
+            "bank":12,"bankrupt":13,"biodegrade":14,"blood-transfusion":15,"car":16,
+            "cardiotocography":17,"cervical-cancer":18, "climate-sim":19,"contraceptive":20,
+            "credit-approval":21,"credit-default":22,"crowdsource":23,"drug-consumption":24,
+            "electric-stable":25,"gamma":26,"hand":27,"hepmass":28,"htru2":29,"image":30,
+            "kddcup":31,"liver":32,"mushroom":33,"phishing":34,"sensorless-drive":35,"shop-intention":36}
 
-def cal_entropy(temp):
+
+def cal_entropy(temp,total):
     total = sum(temp)
     if len(temp)>1:
         if 0 in temp:
             val = (temp[0] / total) * math.log(temp[0] / total, 2)
         else:
             val=(temp[0]/total)*math.log(temp[0]/total,2) + (temp[1]/total)*math.log(temp[1]/total,2)
-        return -val
+        return -(sum(temp)*val)/total
     else:
         return
 
-def all_entropies(df1):
+def all_entropies(df1,total):
     mdlp = MDLP()
     x_test=mdlp.fit_transform(df1[df1.columns[:-1]].values, df1[df1.columns[-1]].values)
     entropies = []
@@ -61,47 +67,47 @@ def all_entropies(df1):
                 if j == 0:
                     temp = df1[df1[x] <= y[j]]['class'].value_counts().values.tolist()
                     if len(temp) > 1:
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
                     else:
                         temp.append(0)
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
                 if j == len(y) - 1:
                     temp = df1[df1[x] > y[j]]['class'].value_counts().values.tolist()
                     if len(temp) > 1:
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
                     else:
                         temp.append(0)
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
 
                 if j != len(y) - 1:
                     temp = df1[(df1[x] > y[j]) & (df1[x] <= y[j + 1])]['class'].value_counts().values.tolist()
                     if len(temp) > 1:
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
                     else:
                         temp.append(0)
-                        entropies.append(cal_entropy(temp))
+                        entropies.append(cal_entropy(temp,total))
 
         if len(y) == 1:
             temp = df1[df1[x] <= y[0]]['class'].value_counts().values.tolist()
             if len(temp) > 1:
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
             else:
                 temp.append(0)
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
             temp = df1[df1[x] > y[0]]['class'].value_counts().values.tolist()
             if len(temp) > 1:
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
             else:
                 temp.append(0)
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
 
         if len(y) == 0:
             temp = df1['class'].value_counts().values.tolist()
             if len(temp) > 1:
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
             else:
                 temp.append(0)
-                entropies.append(cal_entropy(temp))
+                entropies.append(cal_entropy(temp, total))
 
     return sorted(entropies)
 
@@ -125,10 +131,13 @@ if __name__ == '__main__':
         df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
         df1['class'] = df[df.columns[-1]]
         temp.append(i)
-        vals=all_entropies(df1)
+        total = df1['class'].count()
+        vals=all_entropies(df1,total)
+        vals = [i for i in vals if i != None]
+
         for x in [10,30,50,70,90]:
             temp.append(round(np.percentile(vals,x),2))
-        total=df1['class'].count()
+
         temp.append(total)
         pos=df1[df1['class']==1]['class'].count()
         temp.append(round(round((pos/total),3)*100,1))
@@ -150,11 +159,13 @@ if __name__ == '__main__':
         df1['class'] = df[df.columns[-1]]
 
         temp.append(i)
-        vals = all_entropies(df1)
+        total = df1['class'].count()
+        vals = all_entropies(df1,total)
+        vals = [i for i in vals if i != None]
 
         for x in [10, 30, 50, 70, 90]:
             temp.append(round(np.percentile(vals, x), 2))
-        total = df1['class'].count()
+
         temp.append(total)
         pos = df1[df1['class'] == 1]['class'].count()
         temp.append(round(round((pos / total), 3) * 100, 1))
@@ -175,11 +186,13 @@ if __name__ == '__main__':
             df1['class'] = df[df.columns[-1]]
 
             temp.append(k+"_"+i)
-            vals = all_entropies(df1)
+            total = df1['class'].count()
+            vals = all_entropies(df1,total)
+            vals = [i for i in vals if i != None]
 
             for x in [10, 30, 50, 70, 90]:
                 temp.append(round(np.percentile(vals, x), 2))
-            total = df1['class'].count()
+
             temp.append(total)
             pos = df1[df1['class'] == 1]['class'].count()
             temp.append(round(round((pos / total), 3) * 100, 1))
@@ -198,11 +211,13 @@ if __name__ == '__main__':
         df1 = pd.DataFrame(scaler.fit_transform(df[df.columns[:-1]].values))
         df1['class'] = df[df.columns[-1]]
         temp.append(i)
-        vals = all_entropies(df1)
+        total = df1['class'].count()
+        vals = all_entropies(df1,total)
+        vals=[abs(i) for i in vals if i!=None]
 
         for x in [10, 30, 50, 70, 90]:
             temp.append(round(np.percentile(vals, x), 2))
-        total = df1['class'].count()
+
         temp.append(total)
         pos = df1[df1['class'] == 1]['class'].count()
         temp.append(round(round((pos / total), 3) * 100, 1))
