@@ -1,3 +1,6 @@
+from __future__ import print_function
+__author__ = 'amrit'
+
 import random
 
 from sklearn.linear_model import LogisticRegression
@@ -10,9 +13,7 @@ class DT_TUNER:
     def __init__(self, random_state=0):
         self.criterion = ['gini', 'entropy']
         self.splitter = ['best', 'random']
-        self.max_depth = [2, 1000]
-        self.max_feature = [.1, 1]
-        self.class_weight = [1, 9]
+        self.min_samples_split = [0.0, 1.0]
         random.seed(random_state)
 
         encoder_criterion = LabelEncoder()
@@ -20,18 +21,15 @@ class DT_TUNER:
         encoder_splitter = LabelEncoder()
         self.encoder_splitter = encoder_splitter.fit(self.splitter)
 
-        self.default_config = ('gini', 'best', None, None, None)
+        self.default_config = ('gini', 'best', 2)
 
     def generate_param_combinaions(self):
         criterion = random.choice(self.criterion)
         splitter = random.choice(self.splitter)
-        max_depth = random.randint(self.max_depth[0], self.max_depth[1])
-        max_feature = random.uniform(self.max_feature[0], self.max_feature[1])
+        min_samples_split = random.uniform(self.min_samples_split[0], self.min_samples_split[1])
 
-        class_weight = random.randint(self.class_weight[0], self.class_weight[1])
-        class_weight = {'yes': class_weight, 'no': (10-class_weight)}
 
-        return criterion, splitter, max_depth, max_feature, class_weight
+        return criterion, splitter, min_samples_split
 
     def criterion_transform(self, val):
         arr_list = self.encoder_criterion.transform([val])
@@ -54,17 +52,14 @@ class DT_TUNER:
         return list_of_params
 
     def get_clf(self, configs):
-        clf = DecisionTreeClassifier(criterion=configs[0], splitter=configs[1], max_depth=configs[2],
-                                     max_features=configs[3],
-                               class_weight=configs[4], random_state=0)
+        clf = DecisionTreeClassifier(criterion=configs[0], splitter=configs[1], min_samples_split=configs[2])
         return clf
 
     def transform_to_numeric(self, x):
-        return self.criterion_transform(x[0]), self.splitter_transform(x[1]), x[2], x[3], x[4].get('yes')
+        return self.criterion_transform(x[0]), self.splitter_transform(x[1]), x[2]
 
     def reverse_transform_from_numeric(self, x):
-        return self.criterion_reverse_transform(x[0]), self.splitter_reverse_transform(x[1]), x[2], x[3], \
-               {'yes': x[4], 'no': (10-x[4])}
+        return self.criterion_reverse_transform(x[0]), self.splitter_reverse_transform(x[1]), x[2]
 
 
 class SVM_TUNER:

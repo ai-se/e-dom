@@ -1,103 +1,126 @@
-import copy
-import math
 
+from sklearn.metrics import roc_curve, auc
 from sklearn.metrics import confusion_matrix
+import math
 import numpy as np
+PRE, REC, SPEC, FPR, NPV, ACC, F1 = 7, 6, 5, 4, 3, 2, 1
 
-def get_counts(clf, x_train, y_train, x_test, y_test, test_df, biased_col, metric='aod'):
-    clf.fit(x_train, y_train)
+def get_performance(prediction, test_labels):
+    tn, fp, fn, tp = confusion_matrix(test_labels,prediction, labels=[0,1]).ravel()
+    pre = 1.0 * tp / (tp + fp) if (tp + fp) != 0 else 0
+    rec = 1.0 * tp / (tp + fn) if (tp + fn) != 0 else 0
+    spec = 1.0 * tn / (tn + fp) if (tn + fp) != 0 else 0
+    fpr = 1 - spec
+    npv = 1.0 * tn / (tn + fn) if (tn + fn) != 0 else 0
+    acc = 1.0 * (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) != 0 else 0
+    f1 = 2.0 * tp / (2.0 * tp + fp + fn) if (2.0 * tp + fp + fn) != 0 else 0
+    return [round(x, 3) for x in [pre, rec, spec, fpr, npv, acc, f1]]
 
-    y_pred = clf.predict(x_test)
-    cnf_matrix_valid = confusion_matrix(y_test, y_pred)
-
-    #print(cnf_matrix_valid)
-
-    TP = cnf_matrix_valid[0][0]
-    FP = cnf_matrix_valid[0][1]
-    FN = cnf_matrix_valid[1][0]
-    TN = cnf_matrix_valid[1][1]
-
-
-    test_df['current_pred_' + biased_col] = y_pred.tolist()
-
-    test_df['TP_' + biased_col + "_1"] = np.where((test_df['Probability'] == 1) &
-                                           (test_df['current_pred_' + biased_col] == 1) &
-                                           (test_df[biased_col] == 1), 1, 0)
-
-    test_df['TN_' + biased_col + "_1"] = np.where((test_df['Probability'] == 0) &
-                                                  (test_df['current_pred_' + biased_col] == 0) &
-                                                  (test_df[biased_col] == 1), 1, 0)
-
-    test_df['FN_' + biased_col + "_1"] = np.where((test_df['Probability'] == 1) &
-                                                  (test_df['current_pred_' + biased_col] == 0) &
-                                                  (test_df[biased_col] == 1), 1, 0)
-
-    test_df['FP_' + biased_col + "_1"] = np.where((test_df['Probability'] == 0) &
-                                                  (test_df['current_pred_' + biased_col] == 1) &
-                                                  (test_df[biased_col] == 1), 1, 0)
-
-    test_df['TP_' + biased_col + "_0"] = np.where((test_df['Probability'] == 1) &
-                                                  (test_df['current_pred_' + biased_col] == 1) &
-                                                  (test_df[biased_col] == 0), 1, 0)
-
-    test_df['TN_' + biased_col + "_0"] = np.where((test_df['Probability'] == 0) &
-                                                  (test_df['current_pred_' + biased_col] == 0) &
-                                                  (test_df[biased_col] == 0), 1, 0)
-
-    test_df['FN_' + biased_col + "_0"] = np.where((test_df['Probability'] == 1) &
-                                                  (test_df['current_pred_' + biased_col] == 0) &
-                                                  (test_df[biased_col] == 0), 1, 0)
-
-    test_df['FP_' + biased_col + "_0"] = np.where((test_df['Probability'] == 0) &
-                                                  (test_df['current_pred_' + biased_col] == 1) &
-                                                  (test_df[biased_col] == 0), 1, 0)
-
-    a = test_df['TP_' + biased_col + "_1"].sum()
-    b = test_df['TN_' + biased_col + "_1"].sum()
-    c = test_df['FN_' + biased_col + "_1"].sum()
-    d = test_df['FP_' + biased_col + "_1"].sum()
-    e = test_df['TP_' + biased_col + "_0"].sum()
-    f = test_df['TN_' + biased_col + "_0"].sum()
-    g = test_df['FN_' + biased_col + "_0"].sum()
-    h = test_df['FP_' + biased_col + "_0"].sum()
-
-    if metric=='aod':
-        return  calculate_average_odds_difference(a, b, c, d, e, f, g, h)
-    elif metric=='eod':
-        return calculate_equal_opportunity_difference(a, b, c, d, e, f, g, h)
-    elif metric=='d2h':
-        return d2h(TP,FP,FN,TN)
+def get_score(criteria, prediction, test_labels,data):
+    data["bug"] = test_labels
+    data["prediction"] = prediction
+    tn, fp, fn, tp = confusion_matrix(test_labels,prediction, labels=[0,1]).ravel()
+    pre, rec, spec, fpr, npv, acc, f1 = get_performance(test_labels,prediction)
+    all_metrics = [tp, fp, tn, fn, pre, rec, spec, fpr, npv, acc, f1]
+    if criteria == "Accuracy":
+        score = -all_metrics[-ACC]
+    elif criteria == "d2h":
+        score = all_metrics[-FPR] ** 2 + (1 - all_metrics[-REC]) ** 2
+        score = math.sqrt(score) / math.sqrt(2)
+    elif criteria=="Pf_Auc":
+        score=auc_measure(prediction,test_labels)
+    elif criteria=="popt":
+        score=get_auc(data)
+    elif criteria=="popt20":
+        score=get_popt20(data)
+    elif criteria == "Gini":
+        p1 = all_metrics[-PRE]  # target == 1 for the positive split
+        p0 = 1 - all_metrics[-NPV]  # target == 1 for the negative split
+        score = 1 - p0 ** 2 - p1 ** 2
+    else:  # Information Gain
+        P, N = all_metrics[0] + all_metrics[3], all_metrics[1] + all_metrics[2]
+        p = 1.0 * P / (P + N) if P + N > 0 else 0  # before the split
+        p1 = all_metrics[-PRE]  # the positive part of the split
+        p0 = 1 - all_metrics[-NPV]  # the negative part of the split
+        I, I0, I1 = (-x * np.log2(x) if x != 0 else 0 for x in (p, p0, p1))
+        I01 = p * I1 + (1 - p) * I0
+        score = -(I - I01)  # the smaller the better.
+    return round(score, 3)
 
 
-def calculate_average_odds_difference(TP_male , TN_male, FN_male,FP_male, TP_female , TN_female , FN_female,  FP_female):
-	TPR_male = TP_male/(TP_male+FN_male)
-	TPR_female = TP_female/(TP_female+FN_female)
-	FPR_male = FP_male/(FP_male+TN_male)
-	FPR_female = FP_female/(FP_female+TN_female)
-	average_odds_difference = abs(abs(TPR_male - TPR_female) - abs(FPR_male - FPR_female))/2
-	print("average_odds_difference",average_odds_difference)
-	return average_odds_difference
+def auc_measure(prediction, test_labels):
+    fpr, tpr, _ = roc_curve(test_labels, prediction, pos_label=1)
+    auc1 = auc(fpr, tpr)
+    return auc1
+
+def subtotal(x):
+    xx = [0]
+    for i, t in enumerate(x):
+        xx += [xx[-1] + t]
+    return xx[1:]
 
 
-def calculate_equal_opportunity_difference(TP_male , TN_male, FN_male,FP_male, TP_female , TN_female , FN_female,  FP_female):
-	TPR_male = TP_male/(TP_male+FN_male)
-	TPR_female = TP_female/(TP_female+FN_female)
-	# print(TPR_male,TPR_female)
-	equal_opportunity_difference = abs(TPR_male - TPR_female)
-	print("equal_opportunity_difference:",equal_opportunity_difference)
-	return equal_opportunity_difference
-
-## Calculate d2h
-def d2h(TP,FP,FN,TN):
-   if (FP + TN) != 0:
-       far = FP/(FP+TN)
-   if (TP + FN) != 0:
-       recall = TP/(TP + FN)
-   dist2heaven = math.sqrt((1 - (recall)**2)/2)
-   print("dist2heaven:",dist2heaven)
-   return dist2heaven
+def get_recall(true):
+    total_true = float(len([i for i in true if i == 1]))
+    hit = 0.0
+    recall = []
+    for i in xrange(len(true)):
+        if true[i] == 1:
+            hit += 1
+        recall += [hit / total_true if total_true else 0.0]
+    return recall
 
 
-def measure_final_score(test_df, clf, X_train, y_train, X_test, y_test, biased_col, metric):
-    df = copy.deepcopy(test_df)
-    get_counts(clf, X_train, y_train, X_test, y_test, df, biased_col, metric=metric)
+def get_auc(data):
+    """The smaller the better"""
+    if len(data) == 1:
+        return 0
+    x_sum = float(sum(data['loc']))
+    x = data['loc'].apply(lambda t: t / x_sum)
+    xx = subtotal(x)
+    yy = get_recall(data['bug'].values)
+    try:
+        ret = round(auc(xx, yy), 3)
+    except:
+        #print"?"
+        ret = 0
+    return ret
+
+def get_popt20(data):
+
+  data.sort_values(by=["bug", "loc"], ascending=[0, 1], inplace=True)
+  x_sum = float(sum(data['loc']))
+  x = data['loc'].apply(lambda t: t / x_sum)
+  xx = subtotal(x)
+
+  # get  AUC_optimal
+  yy = get_recall(data['bug'].values)
+  xxx = [i for i in xx if i <= 0.2]
+  yyy = yy[:len(xxx)]
+  s_opt = round(auc(xxx, yyy), 3)
+
+  # get AUC_worst
+  xx = subtotal(x[::-1])
+  yy = get_recall(data['bug'][::-1].values)
+  xxx = [i for i in xx if i <= 0.2]
+  yyy = yy[:len(xxx)]
+  try:
+    s_wst = round(auc(xxx, yyy), 3)
+  except:
+    # print "s_wst forced = 0"
+    s_wst = 0
+
+  # get AUC_prediction
+  data.sort_values(by=["prediction", "loc"], ascending=[0, 1], inplace=True)
+  x = data['loc'].apply(lambda t: t / x_sum)
+  xx = subtotal(x)
+  yy = get_recall(data['bug'].values)
+  xxx = [k for k in xx if k <= 0.2]
+  yyy = yy[:len(xxx)]
+  try:
+    s_m = round(auc(xxx, yyy), 3)
+  except:
+    return 0
+
+  Popt = (s_m - s_wst) / (s_opt - s_wst)
+  return round(Popt,3)

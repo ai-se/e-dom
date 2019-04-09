@@ -41,9 +41,6 @@ file_dic = {"ivy":     ["ivy-1.1.csv", "ivy-1.4.csv", "ivy-2.0.csv"],\
 file_inc = {"ivy": 0, "lucene": 1, "poi":  2, "synapse":3, "velocity":4, "camel": 5,"jedit": 6,
             "log4j": 7, "xalan": 8,"xerces": 9}
 
-def readfile(path=""):
-    df=pd.read_csv(path)
-    return df
 
 def _test(res=''):
 
