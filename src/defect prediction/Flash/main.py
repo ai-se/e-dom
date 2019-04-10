@@ -53,7 +53,7 @@ def _test(res=''):
         np.random.seed(mn)
         seed(mn)
         best_config=tune_dt(train_df,res,metric)
-        tuner=DT_TUNER()
+        tuner=XGB_TUNER()
         x_train,y_train=train_df[train_df.columns[:-1]],train_df[train_df.columns[-1]]
         x_test,y_test=test_df[test_df.columns[:-1]],test_df[test_df.columns[-1]]
         score=measure_fitness(tuner,x_train, y_train, x_test, y_test, best_config, metric)

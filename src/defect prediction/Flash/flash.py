@@ -7,7 +7,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 
 from sklearn.tree import DecisionTreeRegressor
 
-from tuner import DT_TUNER
+from tuner import XGB_TUNER
 import numpy as np
 import copy
 from measure import get_score
@@ -17,7 +17,7 @@ POOL_SIZE = 10000
 INIT_POOL_SIZE = 12
 
 def tune_dt(train_df,project_name,metric='d2h'):
-    tuner = DT_TUNER()
+    tuner = XGB_TUNER()
     x_train, y_train=train_df[train_df.columns[:-1]],train_df[train_df.columns[-1]]
     sss = StratifiedShuffleSplit(n_splits=1, test_size=.2)
     for train_index, tune_index in sss.split(x_train, y_train):
@@ -56,11 +56,13 @@ def tune_with_flash(tuner, x_train, y_train, x_tune, y_tune, project_name,metric
 
     # number of eval
     eval = 0
-    cart_models = []
+
     while this_budget > 0:
 
         cart_model_d2h = DecisionTreeRegressor()
         cart_model_d2h.fit(evaluted_configs, d2h_scores)
+
+        cart_models = []
         cart_models.append(cart_model_d2h)
         next_config_id = acquisition_fn(param_search_space, cart_models)
         next_config = param_search_space.pop(next_config_id)

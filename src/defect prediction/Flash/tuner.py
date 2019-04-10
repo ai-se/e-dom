@@ -4,17 +4,60 @@ __author__ = 'amrit'
 import random
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import OneHotEncoder, LabelEncoder
+from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
+from xgboost import XGBClassifier
+
+class XGB_TUNER:
+    def __init__(self):
+        self.max_depth = [1, 50]
+        self.learning_rate = [0.0, 1.0]
+        self.n_estimators = [50, 150]
+        self.booster = ['gbtree', 'gblinear', 'dart']
+
+        encoder_booster = LabelEncoder()
+        self.encoder_booster = encoder_booster.fit(self.booster)
+
+        self.default_config = (3, 0.1, 100, 'gbtree')
+
+    def generate_param_combinaions(self):
+        max_depth = random.randint(self.max_depth[0],self.max_depth[1])
+        n_estimators = random.randint(self.n_estimators[0],self.n_estimators[1])
+        booster = random.choice(self.booster)
+        learning_rate = random.uniform(self.learning_rate[0], self.learning_rate[1])
+
+
+        return max_depth,learning_rate, n_estimators, booster
+
+    def booster_transform(self, val):
+        arr_list = self.encoder_booster.transform([val])
+        return float(arr_list.tolist()[0])
+
+    def booster_reverse_transform(self, val):
+        arr_list = self.encoder_booster.inverse_transform([int(val)])
+        return arr_list.tolist()[0]
+
+    def generate_param_pools(self, size):
+        list_of_params = [self.generate_param_combinaions() for x in range(size)]
+        return list_of_params
+
+    def get_clf(self, configs):
+        clf = XGBClassifier(max_depth=configs[0], learning_rate=configs[1], n_estimators=configs[2],booster=configs[3],n_jobs=-1)
+        return clf
+
+    def transform_to_numeric(self, x):
+        return x[0], x[1], x[2], self.booster_transform(x[3])
+
+    def reverse_transform_from_numeric(self, x):
+        return x[0], x[1], x[2], self.booster_reverse_transform(x[3])
 
 
 class DT_TUNER:
-    def __init__(self, random_state=0):
+    def __init__(self):
         self.criterion = ['gini', 'entropy']
         self.splitter = ['best', 'random']
         self.min_samples_split = [0.0, 1.0]
-        random.seed(random_state)
 
         encoder_criterion = LabelEncoder()
         self.encoder_criterion = encoder_criterion.fit(self.criterion)
@@ -63,13 +106,12 @@ class DT_TUNER:
 
 
 class SVM_TUNER:
-    def __init__(self, random_state=0):
+    def __init__(self):
         self.C_VALS = [1, 50]
         self.KERNELS = ['rbf', 'linear', 'sigmoid', 'poly']
         self.GAMMAS = [0, 1]
         self.COEF0S = [0, 1]
         self.enc = None
-        random.seed(random_state)
 
         self.label_coding()
 
@@ -114,7 +156,7 @@ class SVM_TUNER:
 
 
 class LR_TUNER:
-    def __init__(self, random_state=0):
+    def __init__(self):
         self.C_VALS = [.01, 50]
         self.PENALTY  = ['l1', 'l2']
         self.SOLVER = ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga']
@@ -122,7 +164,6 @@ class LR_TUNER:
 
         self.enc_solver = None
         self.enc_penalty = None
-        random.seed(random_state)
 
         self.label_coding()
 

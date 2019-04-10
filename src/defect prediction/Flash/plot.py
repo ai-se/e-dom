@@ -9,7 +9,7 @@ import numpy as np
 files=["ivy","camel","jedit","log4j","lucene","poi","synapse","velocity","xalan","xerces"]
 
 def dump_files(f=''):
-    with open("../../../dump/defect/Flash/flash_" + f+".pickle", 'rb') as handle:
+    with open("../../../dump/defect/Flash/XGB/XGB/flash_" + f+".pickle", 'rb') as handle:
         final = pickle.load(handle)
     return final
 
