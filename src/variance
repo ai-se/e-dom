@@ -85,3 +85,9 @@ Random datasets, 37 UCI, 38 SE: 89% recall and precision
 |   |   |   |   |   |   |   30 <= 0.87: Dodge (4.0)
 |   |   |   |   |   |   |   30 > 0.87: RF (3.0/1.0)
 |   |   samples > 12191: RF (6.0/1.0)
+
+Random datasets, 37 UCI, 38 SE: 61% recall , reduced depth, attribute selection, only 2 attributes, 10, %class.
+10 <= 0.31
+|   % class <= 20.2: Dodge (26.0/6.0)
+|   % class > 20.2: RF (21.0/5.0)
+10 > 0.31: Dodge (31.0/12.0)
